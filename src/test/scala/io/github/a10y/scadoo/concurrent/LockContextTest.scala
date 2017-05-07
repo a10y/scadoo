@@ -27,7 +27,7 @@ import org.scalatest._
 
 class LockContextTest extends FlatSpec with Matchers {
 
-  behavior of "A LockContext"
+  behavior of "LockContext"
 
   it should "leave the lock unlocked at the end" in {
     import LockContext.implicits._

@@ -29,6 +29,7 @@ import java.util.concurrent.locks.Lock
   * @param lock The wrapped lock
   */
 final class LockContext(lock: Lock) {
+
   def apply[A](f: => A): A = {
     lock.lock()
     try {
@@ -40,7 +41,11 @@ final class LockContext(lock: Lock) {
 }
 
 object LockContext {
+
   object implicits {
+
     implicit def lockContext(lock: Lock): LockContext = new LockContext(lock)
+
   }
+
 }

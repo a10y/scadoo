@@ -29,14 +29,15 @@ class LockContextTest extends FlatSpec with Matchers {
 
   behavior of "LockContext"
 
-  it should "leave the lock unlocked at the end" in {
+  it should "should be locked in the body and unlocked at the end" in {
     import LockContext.implicits._
 
     val lock = new ReentrantLock()
     val s: String = lock {
+      lock.isLocked shouldBe true
       "hello world"
     }
-    lock.isLocked should be(false)
+    lock.isLocked shouldBe false
     s should be("hello world")
   }
 
@@ -47,11 +48,11 @@ class LockContextTest extends FlatSpec with Matchers {
 
     intercept[RuntimeException] {
       val s: String = lock {
-        lock.isLocked should be(true)
+        lock.isLocked shouldBe true
         throw new RuntimeException("lock should still be unlocked")
       }
     }
-    lock.isLocked should be(false)
+    lock.isLocked shouldBe false
   }
 
 }

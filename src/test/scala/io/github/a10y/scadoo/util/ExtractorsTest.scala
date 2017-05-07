@@ -21,7 +21,7 @@
 
 package io.github.a10y.scadoo.util
 
-import org.scalatest.{ FlatSpec, Matchers }
+import org.scalatest.{FlatSpec, Matchers}
 
 class ExtractorsTest extends FlatSpec with Matchers {
 

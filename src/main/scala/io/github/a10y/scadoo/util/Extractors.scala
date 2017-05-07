@@ -48,8 +48,10 @@ object Extractors {
     def unapply(pair: String): Option[(String, Long)] =
       try {
         val splitArgs = pair.split(":")
-        for (host <- splitArgs.headOption;
-             port <- splitArgs.tail.headOption) yield (host, port.toLong)
+        for {
+          host <- splitArgs.headOption
+          port <- splitArgs.tail.headOption
+        } yield (host, port.toLong)
       } catch {
         case t: NumberFormatException => None
       }

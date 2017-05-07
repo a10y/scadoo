@@ -19,12 +19,39 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.a10y
+package io.github.a10y.scadoo.concurrent
 
-package object scadoo {
+import java.util.concurrent.locks.ReentrantLock
 
-  type Traversable[+A] = scala.collection.immutable.Traversable[A]
-  type Iterable[+A]    = scala.collection.immutable.Iterable[A]
-  type Seq[+A]         = scala.collection.immutable.Seq[A]
-  type IndexedSeq[+A]  = scala.collection.immutable.IndexedSeq[A]
+import org.scalatest._
+
+class LockContextTest extends FlatSpec with Matchers {
+
+  behavior of "A LockContext"
+
+  it should "leave the lock unlocked at the end" in {
+    import LockContext.implicits._
+
+    val lock = new ReentrantLock()
+    val s: String = lock {
+      "hello world"
+    }
+    lock.isLocked should be(false)
+    s should be("hello world")
+  }
+
+  it should "unlock even if an exception is thrown" in {
+    import LockContext.implicits._
+
+    val lock = new ReentrantLock()
+
+    intercept[RuntimeException] {
+      val s: String = lock {
+        lock.isLocked should be(true)
+        throw new RuntimeException("lock should still be unlocked")
+      }
+    }
+    lock.isLocked should be(false)
+  }
+
 }

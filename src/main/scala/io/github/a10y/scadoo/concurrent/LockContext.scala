@@ -19,12 +19,28 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.a10y
+package io.github.a10y.scadoo.concurrent
 
-package object scadoo {
+import java.util.concurrent.locks.Lock
 
-  type Traversable[+A] = scala.collection.immutable.Traversable[A]
-  type Iterable[+A]    = scala.collection.immutable.Iterable[A]
-  type Seq[+A]         = scala.collection.immutable.Seq[A]
-  type IndexedSeq[+A]  = scala.collection.immutable.IndexedSeq[A]
+/**
+  * A LockContext serves to wrap the operations of a lock, similar to the std::lock_guard in C++.
+  * The function f is executed with the lock held, the result is computed and then the lock is released.
+  * @param lock The wrapped lock
+  */
+final class LockContext(lock: Lock) {
+  def apply[A](f: => A): A = {
+    lock.lock()
+    try {
+      f
+    } finally {
+      lock.unlock()
+    }
+  }
+}
+
+object LockContext {
+  object implicits {
+    implicit def lockContext(lock: Lock): LockContext = new LockContext(lock)
+  }
 }
